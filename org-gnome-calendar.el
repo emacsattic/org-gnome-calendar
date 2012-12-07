@@ -222,6 +222,8 @@ and `org-agenda-skip-regexp'."
 (defun ogc:--turn-on ()
   (ogc:--org-gnome-calendar-mode 1))
 
+(defvar ogc:--dbus-object nil)
+
 (define-minor-mode ogc:--org-gnome-calendar-mode
   "Provide `org-mode' events to the GNOME calendar service."
   :group org-gnome-calendar
