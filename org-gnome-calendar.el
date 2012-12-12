@@ -222,6 +222,7 @@ and `org-agenda-skip-regexp'."
 (defun ogc:--turn-on ()
   (ogc:--org-gnome-calendar-mode 1))
 
+(defvar ogc:--dbus-service nil)
 (defvar ogc:--dbus-object nil)
 
 (define-minor-mode ogc:--org-gnome-calendar-mode
@@ -230,16 +231,20 @@ and `org-agenda-skip-regexp'."
   :init-value nil
   (if ogc:--org-gnome-calendar-mode
       (unless ogc:--dbus-object
-        (setq ogc:--dbus-object
-              (dbus-register-method :session
-                                    "org.gnome.Shell.CalendarServer"
-                                    "/org/gnome/Shell/CalendarServer"
-                                    "org.gnome.Shell.CalendarServer"
-                                    "GetEvents"
-                                    'ogc:--dbus-get-events)))
+        (setq ogc:--dbus-service (dbus-register-service :session
+                                                        "org.gnome.Shell.CalendarServer"
+                                                        :replace-existing)
+              ogc:--dbus-object (dbus-register-method :session
+                                                      "org.gnome.Shell.CalendarServer"
+                                                      "/org/gnome/Shell/CalendarServer"
+                                                      "org.gnome.Shell.CalendarServer"
+                                                      "GetEvents"
+                                                      'ogc:--dbus-get-events)))
     (when ogc:--dbus-object
       (dbus-unregister-object ogc:--dbus-object)
-      (setq ogc:--dbus-object nil)
+      (dbus-unregister-service ogc:--dbus-service)
+      (setq ogc:--dbus-service nil
+            ogc:--dbus-object nil)
       (ogc:--cache-reset))))
 
 (provide 'org-gnome-calendar)
