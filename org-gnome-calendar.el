@@ -61,8 +61,6 @@ and `org-agenda-skip-regexp'."
   (let* ((org-agenda-new-buffers nil)
          (files (org-agenda-files 'unrestricted))
          entries)
-    (message "%s" org-agenda-skip-function)
-    (setq files (list "/home/lluis/plans/Work.org"))
     (org-agenda-prepare-buffers files)
     ;; For each file
     (while (setq file (pop files))
@@ -152,7 +150,6 @@ and `org-agenda-skip-regexp'."
 
 (defun ogc:--dbus-get-events (since until force-reload)
   "D-Bus callback for the `GetEvents' method."
-  (message "> %s %s %s" since until force-reload)
   (let* ((day-since  (floor (time-to-number-of-days (seconds-to-time since))))
          (day-until  (floor (time-to-number-of-days (seconds-to-time until))))
          days
