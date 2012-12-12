@@ -78,9 +78,10 @@ and `org-agenda-skip-regexp'."
                 (org-agenda-buffer nil))
            (mapc
             (lambda (entry)
-              (let* ((text (substring-no-properties
-                            (org-trim (or (get-text-property 1 'txt entry)
-                                         ""))))
+              (let* ((text (org-link-display-format
+                            (substring-no-properties
+                             (org-trim (or (get-text-property 1 'txt entry)
+                                          "")))))
                      (dentry
                       (list
                        (cons 'day  day-number)
