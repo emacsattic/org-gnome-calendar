@@ -120,6 +120,10 @@ and `org-agenda-skip-regexp'."
         (nth 5 (file-attributes path))
         time))))
 
+(defun ogc:--cache-create (day)
+  "Create space for entries."
+  (add-to-list 'ogc:--event-cache (list day t)))
+
 (defun ogc:--cache-add (day path entry)
   "Add an entry into the cache."
   (let ((entries (assoc day ogc:--event-cache))
@@ -129,11 +133,11 @@ and `org-agenda-skip-regexp'."
     (if entries
         (nconc entries (list centry))
       (add-to-list 'ogc:--event-cache (append (list day)
-                                              (list (list centry)))))))
+                                              (list centry))))))
 
 (defun ogc:--cache-get (day)
   "Get cached entries for DAY."
-  (nth 1 (assoc day ogc:--event-cache)))
+  (cdr (assoc day ogc:--event-cache)))
 
 (defun ogc:--cache-delete (day)
   "Delete cached entries for DAY."
@@ -155,22 +159,26 @@ and `org-agenda-skip-regexp'."
          days
          result)
 
-    ;; Remove days from cache
-    (when force-reload
-      (ogc:--cache-reset))
-
     ;; For each day in the range requested by D-Bus
     (loop for day from day-since to day-until do
           (let ((entries (ogc:--cache-get day)))
-            ;; Get up-to-date cached entries
-            (when (notany 'ogc:--cache-outdated entries)
+            (cond
+             ((and force-reload (not entries))
+              ;; Never seen this day
+              (ogc:--cache-create day)
+              (add-to-list 'days day t))
+             ((and force-reload (some  'ogc:--cache-outdated (cdr entries)))
+              ;; Remove outdated info from cache
               (ogc:--cache-delete day)
-              (add-to-list 'days day t)
+              (ogc:--cache-create day)
+              (add-to-list 'days day t))
+             (t
+              ;; Use cached info
               (setq result (apply 'append result
                                   (mapcar '(lambda (entry) (nth 3 entry))
-                                          entries))))))
+                                          (cdr entries))))))))
 
-    ;; Get entries for missing days
+    ;; Get entries for missing/outdated days
     (loop for entry in (ogc:--org-get-days-entries days) do
           (let* ((day  (cdr (assoc 'day  entry)))
                  (path (cdr (assoc 'path entry)))
@@ -200,8 +208,7 @@ and `org-agenda-skip-regexp'."
                         :boolean (not time-of-day)               ;all day
                         :int64 (floor (time-to-seconds begin)) ;start time
                         :int64 (floor (time-to-seconds end))   ;end time
-                        (list :array :signature "{sv}")
-                        ))
+                        (list :array :signature "{sv}")))
             (ogc:--cache-add day path dentry)
             (add-to-list 'result dentry)))
 
