@@ -62,7 +62,7 @@ and `org-agenda-skip-regexp'."
 (defun ogc:--org-get-days-entries1 (day-numbers)
   (let* ((org-agenda-new-buffers nil)
          (files (org-agenda-files 'unrestricted))
-         entries)
+         file entries)
     (org-agenda-prepare-buffers files)
     ;; For each file
     (while (setq file (pop files))
