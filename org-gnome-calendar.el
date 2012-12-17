@@ -30,6 +30,7 @@
 
 ;;; Code:
 
+(require 'org)
 (require 'dbus)
 (eval-when-compile
   (require 'cl))
