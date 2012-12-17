@@ -41,7 +41,8 @@
 ;; Customizations
 
 (defgroup org-gnome-calendar nil
-  "Provide `org-mode' events to the GNOME calendar service.")
+  "Provide `org-mode' events to the GNOME calendar service."
+  :group 'calendar)
 
 (defcustom ogc:org-vars nil
   "Let-like form to override variables used by `org-agenda-get-day-entries'.
