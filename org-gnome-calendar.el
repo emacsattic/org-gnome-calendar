@@ -178,7 +178,7 @@ and `org-agenda-skip-regexp'."
              (t
               ;; Use cached info
               (setq result (apply 'append result
-                                  (mapcar '(lambda (entry) (nth 3 entry))
+                                  (mapcar (lambda (entry) (nth 3 entry))
                                           (cdr entries))))))))
 
     ;; Get entries for missing/outdated days
