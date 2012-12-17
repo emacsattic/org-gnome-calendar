@@ -256,4 +256,7 @@ and `org-agenda-skip-regexp'."
 
 (provide 'org-gnome-calendar)
 
+;; Local Variables:
+;; byte-compile-warnings: (not cl-functions)
+;; End:
 ;;; org-gnome-calendar.el ends here
