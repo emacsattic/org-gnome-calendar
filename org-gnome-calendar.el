@@ -249,7 +249,7 @@ and `org-agenda-skip-regexp'."
                                                       'ogc:--dbus-get-events)))
     (when ogc:--dbus-object
       (dbus-unregister-object ogc:--dbus-object)
-      (dbus-unregister-service ogc:--dbus-service)
+      (dbus-unregister-service :session "org.gnome.Shell.CalendarServer")
       (setq ogc:--dbus-service nil
             ogc:--dbus-object nil)
       (ogc:--cache-reset))))
