@@ -1,6 +1,6 @@
 ;;; org-gnome-calendar.el --- Expose org-mode calendar to GNOME
 ;;
-;; Copyright (C) 2012 Lluís Vilanova
+;; Copyright (C) 2012-2016 Lluís Vilanova
 ;;
 ;; Author: Lluís Vilanova <vilanova@ac.upc.edu>
 ;;
@@ -178,7 +178,7 @@ and `org-agenda-skip-regexp'."
              (t
               ;; Use cached info
               (setq result (apply 'append result
-                                  (mapcar (lambda (entry) (nth 3 entry))
+                                  (mapcar #'(lambda (entry) (nth 3 entry))
                                           (cdr entries))))))))
 
     ;; Get entries for missing/outdated days
@@ -208,7 +208,7 @@ and `org-agenda-skip-regexp'."
                         ""                                     ;uid
                         text                                   ;summary
                         ""                                     ;description
-                        :boolean (not time-of-day)               ;all day
+                        :boolean (not time-of-day)             ;all day
                         :int64 (floor (time-to-seconds begin)) ;start time
                         :int64 (floor (time-to-seconds end))   ;end time
                         (list :array :signature "{sv}")))
@@ -246,7 +246,7 @@ and `org-agenda-skip-regexp'."
                                                       "/org/gnome/Shell/CalendarServer"
                                                       "org.gnome.Shell.CalendarServer"
                                                       "GetEvents"
-                                                      'ogc:--dbus-get-events)))
+                                                      #'ogc:--dbus-get-events)))
     (when ogc:--dbus-object
       (dbus-unregister-object ogc:--dbus-object)
       (dbus-unregister-service :session "org.gnome.Shell.CalendarServer")
